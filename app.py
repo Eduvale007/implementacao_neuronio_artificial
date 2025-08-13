@@ -51,10 +51,23 @@ for _ in range(2000):
 
 # ===== Função principal =====
 def enviar_mensagem():
-    numero = entry_numero.get()
-    cidade = entry_cidade.get()
-    if not numero or not cidade:
-        messagebox.showerror("Erro", "Preencha todos os campos!")
+    numero = entry_numero.get().strip()
+    cidade = entry_cidade.get().strip()
+
+    # Remove espaços e traços
+    numero = numero.replace(" ", "").replace("-", "")
+
+    # Adiciona +55 se não tiver código internacional
+    if not numero.startswith("+"):
+        numero = "+55" + numero
+
+    # Validação básica
+    if len(numero) < 13:
+        messagebox.showerror("Erro", "Número inválido! Exemplo: 11999999999 ou +5511999999999")
+        return
+
+    if not cidade:
+        messagebox.showerror("Erro", "Digite a cidade!")
         return
 
     # pegar clima
@@ -88,6 +101,7 @@ def enviar_mensagem():
     minuto = agora.minute + 2
     kit.sendwhatmsg(numero, mensagem, hora, minuto)
     messagebox.showinfo("Pronto", f"Mensagem agendada para {hora}:{minuto:02d}")
+
 
 # ===== Interface Tkinter =====
 root = tk.Tk()
